@@ -1,0 +1,38 @@
+name: Update
+on:
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+
+jobs:
+  update:
+    name: Update package swift
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: corretto
+          java-version: 21
+
+      - name: Download package
+        run: curl -OL https://cdn.doordeck.com/xcframework/v${{ inputs.tag }}/DoordeckSDK.xcframework.zip
+
+      - name: Compute checksum
+        id: checksum
+        run: echo checksum=$(swift package compute-checksum DoordeckSDK.xcframework.zip) >> "$GITHUB_OUTPUT"
+
+      - name: Update package swift
+        run: ./gradlew updatePackageSwift ${{ inputs.tag }} ${{ steps.checksum.outputs.version }}
+
