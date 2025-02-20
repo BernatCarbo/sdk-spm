@@ -5,7 +5,6 @@ plugins {
 tasks.register("updatePackageSwift") {
     val packageVersion: String? by project
     val packageChecksum: String? by project
-
     doLast {
         if (!packageVersion.isNullOrEmpty() && !packageChecksum.isNullOrEmpty()) {
             val packageFile = file("Package.swift")
