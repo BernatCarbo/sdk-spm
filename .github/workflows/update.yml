@@ -1,8 +1,11 @@
+name: Triggered by Repo A
 on:
-  workflow_dispatch:
-    inputs:
-      tag:
-        required: true
+  workflow_run:
+    workflows: ["SDK Build"] # Name of the workflow in Repo A
+    types:
+      - completed
+    branches:
+      - main
 
 jobs:
   update:
