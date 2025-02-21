@@ -1,9 +1,8 @@
-name: Update
 on:
-  workflow_run:
-    workflows: ["SDK Build"]
-    types:
-      - completed
+  workflow_dispatch:
+    inputs:
+      tag:
+        required: true
 
 jobs:
   update:
@@ -26,7 +25,7 @@ jobs:
           java-version: 21
 
       - name: Download package
-        run: curl -OL https://cdn.doordeck.com/xcframework/v${{ inputs.tag }}/DoordeckSDK.xcframework.zip
+        run: curl -OL https://cdn.doordeck.com/xcframework/v${{ github.event.inputs.tag }}/DoordeckSDK.xcframework.zip
 
       - name: Compute checksum
         id: checksum
