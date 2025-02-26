@@ -31,6 +31,18 @@ jobs:
         run: echo checksum=$(swift package compute-checksum DoordeckSDK.xcframework.zip) >> "$GITHUB_OUTPUT"
 
       - name: Update package swift
-        run: ./gradlew updatePackageSwift ${{ github.event.client_payload.tag }} ${{ steps.checksum.outputs.version }}
+        run: |
+          sed -E -i \
+            -e 's|(url: ")[^"]*(")|\1https://cdn.doordeck.com/xcframework/v${{ github.event.client_payload.tag }}/DoordeckSDK.xcframework.zip\2|' \
+            -e 's|(checksum: ")[^"]*(")|\1${{ steps.checksum.outputs.checksum }}\2|' \
+            "Package.swift"
 
-
+      - name: Create Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base main \
+            --head checksum-update \
+            --title "Checksum and version update" \
+            --body "This PR was created automatically using GitHub Actions."
