@@ -14,14 +14,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: corretto
-          java-version: 21
+      - name: Setup Git
+        run: |
+          git config --global user.name "Doordeck Development"
+          git config --global user.email "development@doordeck.com"
 
       - name: Download SPM package
         run: curl -OL https://cdn.doordeck.com/xcframework/v${{ github.event.client_payload.tag }}/DoordeckSDK.xcframework.zip
@@ -36,6 +32,13 @@ jobs:
             -e 's|(url: ")[^"]*(")|\1https://cdn.doordeck.com/xcframework/v${{ github.event.client_payload.tag }}/DoordeckSDK.xcframework.zip\2|' \
             -e 's|(checksum: ")[^"]*(")|\1${{ steps.checksum.outputs.checksum }}\2|' \
             "Package.swift"
+
+      - name: Create branch
+        run: |
+          git checkout -b checksum-update
+          git add Package.swift
+          git commit -m "Checksum and version update"
+          git push origin checksum-update
 
       - name: Create Pull Request
         env:
