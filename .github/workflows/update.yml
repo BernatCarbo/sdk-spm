@@ -35,10 +35,10 @@ jobs:
 
       - name: Create branch
         run: |
-          git checkout -b checksum-update
+          git checkout -b checksum-update-v${{ github.event.client_payload.tag }}
           git add Package.swift
-          git commit -m "Checksum and version update"
-          git push origin checksum-update
+          git commit -m "Checksum and version update v${{ github.event.client_payload.tag }}"
+          git push origin checksum-update-v${{ github.event.client_payload.tag }}
 
       - name: Create Pull Request
         env:
@@ -46,6 +46,6 @@ jobs:
         run: |
           gh pr create \
             --base main \
-            --head checksum-update \
-            --title "Checksum and version update" \
-            --body "This PR was created automatically using GitHub Actions."
+            --head checksum-update-v${{ github.event.client_payload.tag }} \
+            --title "Checksum and version update v${{ github.event.client_payload.tag }}" \
+            --body "Updating version to v${{ github.event.client_payload.tag }} with checksum ${{ steps.checksum.outputs.checksum }}"
