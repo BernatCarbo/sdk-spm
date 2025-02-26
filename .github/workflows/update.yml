@@ -1,11 +1,7 @@
 name: Triggered by Repo A
 on:
-  workflow_run:
-    workflows: ["SDK Build"] # Name of the workflow in Repo A
-    types:
-      - completed
-    branches:
-      - main
+  repository_dispatch:
+    types: [spm-release]
 
 jobs:
   update:
@@ -28,7 +24,7 @@ jobs:
           java-version: 21
 
       - name: Download package
-        run: curl -OL https://cdn.doordeck.com/xcframework/v${{ github.event.inputs.tag }}/DoordeckSDK.xcframework.zip
+        run: curl -OL https://cdn.doordeck.com/xcframework/v${{ github.event.client_payload.tag }}/DoordeckSDK.xcframework.zip
 
       - name: Compute checksum
         id: checksum
