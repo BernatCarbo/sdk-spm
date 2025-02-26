@@ -4,8 +4,8 @@ on:
     types: [spm-release]
 
 jobs:
-  update:
-    name: Update package swift
+  spm-release:
+    name: SPM release
     runs-on: macos-latest
 
     steps:
@@ -22,7 +22,7 @@ jobs:
       - name: Download SPM package
         run: curl -OL https://cdn.doordeck.com/xcframework/v${{ github.event.client_payload.tag }}/DoordeckSDK.xcframework.zip
 
-      - name: Compute checksum
+      - name: Compute package checksum
         id: checksum
         run: echo checksum=$(swift package compute-checksum DoordeckSDK.xcframework.zip) >> "$GITHUB_OUTPUT"
 
@@ -40,7 +40,7 @@ jobs:
           git commit -m "Checksum and version update v${{ github.event.client_payload.tag }}"
           git push origin checksum-update-v${{ github.event.client_payload.tag }}
 
-      - name: Create Pull Request
+      - name: Create pull request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
