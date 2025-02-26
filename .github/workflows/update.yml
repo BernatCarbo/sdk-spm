@@ -1,4 +1,4 @@
-name: Triggered by Repo A
+name: SPM release
 on:
   repository_dispatch:
     types: [spm-release]
@@ -23,7 +23,7 @@ jobs:
           distribution: corretto
           java-version: 21
 
-      - name: Download package
+      - name: Download SPM package
         run: curl -OL https://cdn.doordeck.com/xcframework/v${{ github.event.client_payload.tag }}/DoordeckSDK.xcframework.zip
 
       - name: Compute checksum
@@ -31,5 +31,6 @@ jobs:
         run: echo checksum=$(swift package compute-checksum DoordeckSDK.xcframework.zip) >> "$GITHUB_OUTPUT"
 
       - name: Update package swift
-        run: ./gradlew updatePackageSwift ${{ inputs.tag }} ${{ steps.checksum.outputs.version }}
+        run: ./gradlew updatePackageSwift ${{ github.event.client_payload.tag }} ${{ steps.checksum.outputs.version }}
+
 
