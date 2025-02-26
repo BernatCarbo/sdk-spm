@@ -32,7 +32,7 @@ jobs:
 
       - name: Update package swift
         run: |
-          sed -E -i \
+          sed -E -i '' \
             -e 's|(url: ")[^"]*(")|\1https://cdn.doordeck.com/xcframework/v${{ github.event.client_payload.tag }}/DoordeckSDK.xcframework.zip\2|' \
             -e 's|(checksum: ")[^"]*(")|\1${{ steps.checksum.outputs.checksum }}\2|' \
             "Package.swift"
